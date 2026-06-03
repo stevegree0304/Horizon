@@ -2,7 +2,7 @@
   "ai": {
     "provider": "gemini",
     "model": "gemini-1.5-flash",
-    "api_key_env": "GEMINI_API_KEY"
+    "api_key_env": "OPENAI_API_KEY"
   },
   "sources": {
     "rss": [
