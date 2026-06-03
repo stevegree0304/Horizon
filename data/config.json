@@ -1,0 +1,26 @@
+{
+  "ai": {
+    "provider": "gemini",
+    "model": "gemini-1.5-flash",
+    "api_key_env": "GEMINI_API_KEY"
+  },
+  "sources": {
+    "rss": [
+      {
+        "name": "极客公园",
+        "url": "https://www.geekpark.net/rss"
+      },
+      {
+        "name": "36氪",
+        "url": "https://36kr.com/feed"
+      }
+    ]
+  },
+  "filtering": {
+    "ai_score_threshold": 6.0,
+    "language": "zh"
+  },
+  "output": {
+    "channels": ["pages"]
+  }
+}
