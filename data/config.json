@@ -2,8 +2,8 @@
   "ai": {
     "provider": "gemini",
     "model": "gemini-1.5-flash",
-    "api_key_env": "OPENAI_API_KEY"
-  },
+    "api_key_env": "GOOGLE_API_KEY"
+  }
   "sources": {
     "rss": [
       /* === 全球顶级大报与通讯社（自动翻译并精简） === */
