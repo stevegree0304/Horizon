@@ -1,10 +1,12 @@
 name: Daily Horizon Summary
 
 on:
-  # schedule:
-  #   - cron: '0 0 */2 * *'  # Runs every 2 days at 00:00 UTC
-  #     timezone: 'Asia/Shanghai'
-  workflow_dispatch:      # Allow manual trigger
+  schedule:
+    - cron: '30 6 * * *'   # 北京时间 早上 06:30 (早报)
+    - cron: '30 11 * * *'  # 北京时间 中午 11:30 (午报)
+    - cron: '0 21 * * *'   # 北京时间 晚上 21:00 (晚报)
+      timezone: 'Asia/Shanghai'
+  workflow_dispatch:       # Allow manual trigger
 
 jobs:
   daily-summary:
