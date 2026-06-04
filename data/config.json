@@ -1,9 +1,9 @@
 {
   "ai": {
     "provider": "openai",
-    "model": "gemini-1.5-flash",
+    "model": "deepseek-chat",
     "api_key_env": "OPENAI_API_KEY",
-    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/"
+    "base_url": "https://api.deepseek.com/v1"
   }
   "sources": {
     "rss": [
