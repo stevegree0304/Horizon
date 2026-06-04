@@ -37,12 +37,15 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: uv run horizon --hours 48
 
+      - name: Prepare Telegram Message
+        run: cp data/summaries/*-zh.md telegram_msg.txt
+
       - name: Send to Telegram
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          message_file: data/summaries/horizon-${{ env.DATE }}-zh.md
+          message_file: telegram_msg.txt
         
       - name: Set current date as environment variable
         run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
