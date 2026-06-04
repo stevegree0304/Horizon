@@ -62,6 +62,9 @@
     "language": "zh"
   },
   "output": {
-    "channels": ["pages"]
+    "channels": ["pages", "telegram"],
+    "telegram": {
+      "bot_token_env": "TELEGRAM_BOT_TOKEN",
+      "chat_id_env": "TELEGRAM_CHAT_ID"
   }
 }
