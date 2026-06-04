@@ -6,18 +6,59 @@
   },
   "sources": {
     "rss": [
+      /* === 全球顶级大报与通讯社（自动翻译并精简） === */
       {
-        "name": "极客公园",
-        "url": "https://www.geekpark.net/rss"
+        "name": "路透社-全球头条",
+        "url": "https://rss.app/feeds/u5mGAtWwHAnS06xX.xml"
       },
       {
-        "name": "36氪",
-        "url": "https://36kr.com/feed"
+        "name": "纽约时报-首页新闻",
+        "url": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"
+      },
+      {
+        "name": "英国-金融时报(FT)中文网",
+        "url": "https://rsshub.app/ft/chinese/hotstory"
+      },
+      {
+        "name": "德国-明镜周刊(Spiegel)国际版",
+        "url": "https://www.spiegel.de/international/index.rss"
+      },
+
+      /* === 海外主流社交平台（看全网最热门新闻） === */
+      {
+        "name": "X(Twitter)-全球趋势热点",
+        "url": "https://rsshub.app/twitter/trends"
+      },
+      {
+        "name": "Reddit-全网大热门(R/All)",
+        "url": "https://www.reddit.com/r/all/.rss"
+      },
+      {
+        "name": "Reddit-世界新闻热点",
+        "url": "https://www.reddit.com/r/news/.rss"
+      },
+
+      /* === 国内主流与一线财经渠道 === */
+      {
+        "name": "财联社-电报快讯",
+        "url": "https://rsshub.app/cls/telegraph"
+      },
+      {
+        "name": "财新网-最新文章",
+        "url": "https://rsshub.app/caixin/article"
+      },
+      {
+        "name": "雪球网-今日热帖",
+        "url": "https://rsshub.app/xueqiu/hots"
+      },
+      {
+        "name": "新浪新闻-全网要闻",
+        "url": "https://rsshub.app/sina/discovery/hot_search"
       }
     ]
   },
   "filtering": {
-    "ai_score_threshold": 1.0,
+    "ai_score_threshold": 3.0,
     "language": "zh"
   },
   "output": {
