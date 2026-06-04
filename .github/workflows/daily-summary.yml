@@ -37,25 +37,41 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: uv run horizon --hours 48
 
-      - name: Prepare Telegram Message
-        run: cp data/summaries/*-zh.md telegram_msg.txt
+      - name: Split and Send Full News to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python -c '
+          import os, requests, glob
 
-      - name: Send to Telegram
-        uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          message_file: telegram_msg.txt
-        
-      - name: Set current date as environment variable
-        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+          token = os.environ["TELEGRAM_BOT_TOKEN"]
+          chat_id = os.environ["TELEGRAM_CHAT_ID"]
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
-          keep_files: true  # Keep existing summaries on gh-pages branch
-          commit_message: "📝 Daily Summary: ${{ env.DATE }}"
-          publish_branch: gh-pages
-          enable_jekyll: true
+          # 1. 自动抓取今天生成的中文新闻内容
+          files = glob.glob("data/summaries/*-zh.md")
+          if not files:
+              print("没有找到中文摘要文件！")
+              exit(0)
+              
+          with open(files[0], "r", encoding="utf-8") as f:
+              content = f.read()
+
+          # 2. 按照 3500 个字符进行精准拆分
+          MAX_LEN = 3500
+          chunks = [content[i:i+MAX_LEN] for i in range(0, len(content), MAX_LEN)]
+
+          # 3. 连发循环
+          for idx, chunk in enumerate(chunks):
+              header = f"📰 <b>今日 AI 聚合新闻 (第 {idx+1}/{len(chunks)} 页)</b>\n\n"
+              payload = {
+                  "chat_id": chat_id,
+                  "text": header + chunk,
+                  "parse_mode": "Markdown"
+              }
+              res = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", json=payload)
+              if res.status_code != 200:
+                  payload["parse_mode"] = ""
+                  requests.post(f"https://api.telegram.org/bot{token}/sendMessage", json=payload)
+          print(f"成功将新闻拆分为 {len(chunks)} 条消息发送完毕！")
+          '
