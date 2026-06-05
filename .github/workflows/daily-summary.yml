@@ -44,7 +44,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: *** secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          cat > /tmp/tg_send.py << 'PYEOF'
+          python3 << 'EOF'
           import os,requests,glob,re
           t=os.environ["TELEGRAM_BOT_TOKEN"]
           c=os.environ["TELEGRAM_CHAT_ID"]
@@ -75,8 +75,7 @@ jobs:
               requests.post("https://api.telegram.org/bot"+t+"/sendMessage",json=p)
             n+=1
           print("sent "+str(n)+" articles")
-          PYEOF
-          python /tmp/tg_send.py
+          EOF
 
       - name: Commit generated summaries
         run: |
