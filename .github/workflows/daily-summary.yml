@@ -34,49 +34,38 @@ jobs:
 
       - name: Run Horizon
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_API_KEY: *** secrets.OPENAI_API_KEY }}
         run: uv run horizon --hours 48
 
-      - name: Split and Send Full News to Telegram
+      - name: Send Report to Telegram
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_BOT_TOKEN: *** secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          python -c '
+          python -c "
           import os, requests, glob
-
-          token = os.environ["TELEGRAM_BOT_TOKEN"]
-          chat_id = os.environ["TELEGRAM_CHAT_ID"]
-
-          files = glob.glob("data/summaries/*-zh.md")
-          if not files:
-              print("娌℃湁鎵惧埌涓枃鎽樿鏂囦欢锛?)
+          t=os.environ['TELEGRAM_BOT_TOKEN']
+          c=os.environ['TELEGRAM_CHAT_ID']
+          f=glob.glob('data/summaries/*-zh.md')
+          if not f:
+              print('no summary file found')
               exit(0)
-
-          with open(files[0], "r", encoding="utf-8") as f:
-              content = f.read()
-
-          MAX_LEN = 3500
-          chunks = [content[i:i+MAX_LEN] for i in range(0, len(content), MAX_LEN)]
-
-          for idx, chunk in enumerate(chunks):
-              header = f"馃摪 <b>浠婃棩 AI 鑱氬悎鏂伴椈 (绗?{idx+1}/{len(chunks)} 椤?</b>\n\n"
-              payload = {
-                  "chat_id": chat_id,
-                  "text": header + chunk,
-                  "parse_mode": "HTML"
-              }
-              res = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", json=payload)
-              if res.status_code != 200:
-                  payload["parse_mode"] = ""
-                  requests.post(f"https://api.telegram.org/bot{token}/sendMessage", json=payload)
-          print(f"鉁?鎴愬姛灏嗘柊闂绘媶鍒嗕负 {len(chunks)} 鏉℃秷鎭彂閫佸畬姣曪紒")
-          '
+          txt=open(f[0],encoding='utf-8').read()
+          L=3500; cs=[txt[i:i+L] for i in range(0,len(txt),L)]
+          for i,ch in enumerate(cs):
+              h='<b>Today News ('+str(i+1)+'/'+str(len(cs))+')\n\n</b>'+ch
+              d={'chat_id':c,'text':h,'parse_mode':'HTML'}
+              r=requests.post('https://api.telegram.org/bot'+t+'/sendMessage',json=d)
+              if r.status_code!=200:
+                  d['parse_mode']=''
+                  requests.post('https://api.telegram.org/bot'+t+'/sendMessage',json=d)
+          print('sent '+str(len(cs))+' messages')
+          "
 
       - name: Commit generated summaries
         run: |
           git config --global user.name "Horizon Bot"
           git config --global user.email "horizon-bot@users.noreply.github.com"
           git add data/summaries/ docs/_posts/
-          git diff --staged --quiet || git commit -m "馃摪 Daily Horizon summary $(date +'%Y-%m-%d %H:%M')"
+          git diff --staged --quiet || git commit -m "Daily Horizon summary $(date +'%Y-%m-%d %H:%M')"
           git push
