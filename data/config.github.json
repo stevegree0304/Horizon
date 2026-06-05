@@ -43,38 +43,25 @@
       "min_score": 100
     },
     "rss": [
-      {
-        "name": "Simon Willison",
-        "url": "https://simonwillison.net/atom/everything/",
-        "enabled": true,
-        "category": "ai-tools"
-      },
-      {
-        "name": "LWN.net (subscriber full-text)",
-        "url": "https://lwn.net/headlines/full_text?key=${LWN_KEY}",
-        "enabled": false,
-        "category": "linux"
-      }
+      { "name": "路透社-全球头条", "url": "https://rss.app/feeds/u5mGAtWwHAnS06xX.xml", "enabled": true, "category": "news" },
+      { "name": "纽约时报-首页新闻", "url": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml", "enabled": true, "category": "news" },
+      { "name": "英国-金融时报(FT)中文网", "url": "https://rsshub.app/ft/chinese/hotstory", "enabled": true, "category": "news" },
+      { "name": "德国-明镜周刊(Spiegel)国际版", "url": "https://www.spiegel.de/international/index.rss", "enabled": true, "category": "news" },
+      { "name": "X(Twitter)-全球趋势热点", "url": "https://rsshub.app/twitter/trends", "enabled": true, "category": "social" },
+      { "name": "Reddit-全网大热门(R/All)", "url": "https://www.reddit.com/r/all/.rss", "enabled": true, "category": "social" },
+      { "name": "Reddit-世界新闻热点", "url": "https://www.reddit.com/r/news/.rss", "enabled": true, "category": "news" },
+      { "name": "财联社-电报快讯", "url": "https://rsshub.app/cls/telegraph", "enabled": true, "category": "finance" },
+      { "name": "财新网-最新文章", "url": "https://rsshub.app/caixin/article", "enabled": true, "category": "finance" },
+      { "name": "雪球网-今日热帖", "url": "https://rsshub.app/xueqiu/hots", "enabled": true, "category": "finance" },
+      { "name": "新浪新闻-全网要闻", "url": "https://rsshub.app/sina/discovery/hot_search", "enabled": true, "category": "news" }
     ],
     "reddit": {
       "enabled": true,
       "subreddits": [
-        {
-          "subreddit": "MachineLearning",
-          "enabled": true,
-          "sort": "hot",
-          "time_filter": "day",
-          "fetch_limit": 15,
-          "min_score": 50
-        }
+        { "subreddit": "MachineLearning", "enabled": true, "sort": "hot", "time_filter": "day", "fetch_limit": 15, "min_score": 50 }
       ],
       "users": [
-        {
-          "username": "iamthatis",
-          "enabled": true,
-          "sort": "new",
-          "fetch_limit": 10
-        }
+        { "username": "iamthatis", "enabled": true, "sort": "new", "fetch_limit": 10 }
       ],
       "fetch_comments": 5
     },
@@ -112,7 +99,7 @@
     }
   },
   "filtering": {
-    "ai_score_threshold": 3.0,
+    "ai_score_threshold": 1.0,
     "time_window_hours": 24
   },
   "webhook": {
@@ -128,29 +115,16 @@
       "msg_type": "interactive",
       "card": {
         "schema": "2.0",
-        "config": {
-          "wide_screen_mode": true
-        },
+        "config": { "wide_screen_mode": true },
         "header": {
-          "title": {
-            "tag": "plain_text",
-            "content": "#{message_title}"
-          },
+          "title": { "tag": "plain_text", "content": "#{message_title}" },
           "template": "blue"
         },
         "body": {
           "elements": [
-            {
-              "tag": "markdown",
-              "content": "Horizon生成结果: #{result}\nHorizon日报重要资讯数量: #{important_items}/#{all_items}"
-            },
-            {
-              "tag": "hr"
-            },
-            {
-              "tag": "markdown",
-              "content": "#{summary}"
-            }
+            { "tag": "markdown", "content": "Horizon生成结果: #{result}\nHorizon日报重要资讯数量: #{important_items}/#{all_items}" },
+            { "tag": "hr" },
+            { "tag": "markdown", "content": "#{summary}" }
           ]
         }
       }
