@@ -1,9 +1,85 @@
-name: Test123
+name: Daily Horizon Summary
 
-on: workflow_dispatch
+on:
+  schedule:
+    - cron: '30 22 * * *'
+    - cron: '30 3 * * *'
+    - cron: '0 13 * * *'
+  workflow_dispatch:
 
 jobs:
-  test:
+  daily-summary:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-      - run: echo hello
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Prepare GitHub Actions config
+        run: cp data/config.github.json data/config.json
+
+      - name: Install pip packages
+        run: pip install requests
+
+      - name: Run Horizon
+        env:
+          OPENAI_API_KEY: *** secrets.OPENAI_API_KEY }}
+        run: uv run horizon --hours 12
+
+      - name: Send Report to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: *** secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python3 << 'PYEOF'
+          import os,requests,glob,re
+          t=os.environ["TELEGRAM_BOT_TOKEN"]
+          c=os.environ["TELEGRAM_CHAT_ID"]
+          f=glob.glob("data/summaries/*-zh.md")
+          if not f: print("no summary"); exit(0)
+          txt=open(f[0],encoding="utf-8").read()
+          items=re.split('<a id="item-\d+"></a>',txt)[1:]
+          n=0
+          for it in items:
+            it=it.strip()
+            if not it: continue
+            s=re.search("\d+\.\d+",it)
+            if s and float(s.group(0))<3.0: continue
+            m=re.search('##\s*\[(.+?)\]\((.+?)\)',it)
+            if not m: continue
+            tl=m.group(1); u=m.group(2)
+            b=re.sub("<[^>]+>","",it)
+            b=re.sub("参考链接.*","",b,flags=re.DOTALL)
+            b=re.sub("标签.*","",b)
+            b=re.sub("\*\*","",b)
+            b=re.sub("\n{3,}","\n\n",b).strip()
+            if len(b)>3800: b=b[:3800]+"..."
+            msg="<b>"+tl+"</b>\n\n"+b+"\n\n<a href=\""+u+"\">Read more</a>"
+            p={"chat_id":c,"text":msg,"parse_mode":"HTML"}
+            r=requests.post("https://api.telegram.org/bot"+t+"/sendMessage",json=p)
+            if r.status_code!=200:
+              p["parse_mode"]=""
+              requests.post("https://api.telegram.org/bot"+t+"/sendMessage",json=p)
+            n+=1
+          print("sent "+str(n)+" articles")
+          PYEOF
+
+      - name: Commit generated summaries
+        run: |
+          git config --global user.name "Horizon Bot"
+          git config --global user.email "horizon-bot@users.noreply.github.com"
+          git add data/summaries/ docs/_posts/
+          git diff --staged --quiet || git commit -m "Daily Horizon summary"; git push
