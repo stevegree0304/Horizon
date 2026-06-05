@@ -36,15 +36,15 @@ jobs:
 
       - name: Run Horizon
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_API_KEY: *** secrets.OPENAI_API_KEY }}
         run: uv run horizon --hours 12
 
       - name: Send Report to Telegram
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_BOT_TOKEN: *** secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          python -c '
+          cat > /tmp/tg_send.py << 'PYEOF'
           import os,requests,glob,re
           t=os.environ["TELEGRAM_BOT_TOKEN"]
           c=os.environ["TELEGRAM_CHAT_ID"]
@@ -56,7 +56,7 @@ jobs:
           for it in items:
             it=it.strip()
             if not it: continue
-            s=re.search("\u2b50\s*([\d.]+)/10",it)
+            s=re.search("⭐️\s*([\d.]+)/10",it)
             if s and float(s.group(1))<3.0: continue
             m=re.search('##\s*\[(.+?)\]\((.+?)\)',it)
             if not m: continue
@@ -67,7 +67,7 @@ jobs:
             b=re.sub("\*\*","",b)
             b=re.sub("\n{3,}","\n\n",b).strip()
             if len(b)>3800: b=b[:3800]+"..."
-            msg="<b>"+tl+"</b>\n\n"+b+"\n\n<a href=\""+u+"\">\U0001f4d6 Read more</a>"
+            msg="<b>"+tl+"</b>\n\n"+b+"\n\n<a href=\""+u+"\">📖 Read more</a>"
             p={"chat_id":c,"text":msg,"parse_mode":"HTML"}
             r=requests.post("https://api.telegram.org/bot"+t+"/sendMessage",json=p)
             if r.status_code!=200:
@@ -75,7 +75,8 @@ jobs:
               requests.post("https://api.telegram.org/bot"+t+"/sendMessage",json=p)
             n+=1
           print("sent "+str(n)+" articles")
-          '
+          PYEOF
+          python /tmp/tg_send.py
 
       - name: Commit generated summaries
         run: |
