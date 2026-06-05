@@ -49,11 +49,22 @@
       { "name": "德国-明镜周刊(Spiegel)国际版", "url": "https://www.spiegel.de/international/index.rss", "enabled": true, "category": "news" },
       { "name": "X(Twitter)-全球趋势热点", "url": "https://rsshub.app/twitter/trends", "enabled": true, "category": "social" },
       { "name": "Reddit-全网大热门(R/All)", "url": "https://www.reddit.com/r/all/.rss", "enabled": true, "category": "social" },
+      { "name": "Reddit-中国热门", "url": "https://www.reddit.com/r/china/.rss", "enabled": true, "category": "china" },
+      { "name": "X/Twitter-中国热搜", "url": "https://rsshub.app/twitter/trends/China", "enabled": true, "category": "china" }
       { "name": "Reddit-世界新闻热点", "url": "https://www.reddit.com/r/news/.rss", "enabled": true, "category": "news" },
       { "name": "财联社-电报快讯", "url": "https://rsshub.app/cls/telegraph", "enabled": true, "category": "finance" },
       { "name": "财新网-最新文章", "url": "https://rsshub.app/caixin/article", "enabled": true, "category": "finance" },
       { "name": "雪球网-今日热帖", "url": "https://rsshub.app/xueqiu/hots", "enabled": true, "category": "finance" },
       { "name": "新浪新闻-全网要闻", "url": "https://rsshub.app/sina/discovery/hot_search", "enabled": true, "category": "news" }
+      { "name": "美联社-全球头条", "url": "https://rsshub.app/apnews/topics/apf-topnews", "enabled": true, "category": "news" },
+      { "name": "BBC-中文网", "url": "https://feeds.bbci.co.uk/zhongwen/simp/rss.xml", "enabled": true, "category": "news" },
+      { "name": "华尔街日报-中文版", "url": "https://rsshub.app/wsj/zh-hans", "enabled": true, "category": "finance" },
+      { "name": "联合早报-即时中国", "url": "https://rsshub.app/zaobao/realtime/china", "enabled": true, "category": "china" },
+      { "name": "日经亚洲", "url": "https://rsshub.app/nikkeiasia", "enabled": true, "category": "finance" },
+      { "name": "端传媒", "url": "https://rsshub.app/theinitium", "enabled": true, "category": "news" },
+      { "name": "美国之音-中文", "url": "https://rsshub.app/voa/china", "enabled": true, "category": "china" },
+      { "name": "自由亚洲-中文", "url": "https://rsshub.app/rfa/chinese", "enabled": true, "category": "china" },
+      { "name": "微博-热搜", "url": "https://rsshub.app/weibo/search/hot", "enabled": true, "category": "china" }
     ],
     "reddit": {
       "enabled": true,
@@ -99,7 +110,7 @@
     }
   },
   "filtering": {
-    "ai_score_threshold": 1.0,
+    "ai_score_threshold": 3.0,
     "time_window_hours": 24
   },
   "webhook": {
