@@ -2,17 +2,17 @@ name: Daily Horizon Summary
 
 on:
   schedule:
-    - cron: '30 6 * * *'   # 北京时间 早上 06:30 (早报)
-    - cron: '30 11 * * *'  # 北京时间 中午 11:30 (午报)
-    - cron: '0 21 * * *'   # 北京时间 晚上 21:00 (晚报)
+    - cron: '30 6 * * *'
+    - cron: '30 11 * * *'
+    - cron: '0 21 * * *'
       timezone: 'Asia/Shanghai'
-  workflow_dispatch:       # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   daily-summary:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Needed to commit changes
+      contents: write
 
     steps:
       - name: Checkout code
@@ -48,30 +48,35 @@ jobs:
           token = os.environ["TELEGRAM_BOT_TOKEN"]
           chat_id = os.environ["TELEGRAM_CHAT_ID"]
 
-          # 1. 自动抓取今天生成的中文新闻内容
           files = glob.glob("data/summaries/*-zh.md")
           if not files:
-              print("没有找到中文摘要文件！")
+              print("娌℃湁鎵惧埌涓枃鎽樿鏂囦欢锛?)
               exit(0)
-              
+
           with open(files[0], "r", encoding="utf-8") as f:
               content = f.read()
 
-          # 2. 按照 3500 个字符进行精准拆分
           MAX_LEN = 3500
           chunks = [content[i:i+MAX_LEN] for i in range(0, len(content), MAX_LEN)]
 
-          # 3. 连发循环
           for idx, chunk in enumerate(chunks):
-              header = f"📰 <b>今日 AI 聚合新闻 (第 {idx+1}/{len(chunks)} 页)</b>\n\n"
+              header = f"馃摪 <b>浠婃棩 AI 鑱氬悎鏂伴椈 (绗?{idx+1}/{len(chunks)} 椤?</b>\n\n"
               payload = {
                   "chat_id": chat_id,
                   "text": header + chunk,
-                  "parse_mode": "Markdown"
+                  "parse_mode": "HTML"
               }
               res = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", json=payload)
               if res.status_code != 200:
                   payload["parse_mode"] = ""
                   requests.post(f"https://api.telegram.org/bot{token}/sendMessage", json=payload)
-          print(f"成功将新闻拆分为 {len(chunks)} 条消息发送完毕！")
+          print(f"鉁?鎴愬姛灏嗘柊闂绘媶鍒嗕负 {len(chunks)} 鏉℃秷鎭彂閫佸畬姣曪紒")
           '
+
+      - name: Commit generated summaries
+        run: |
+          git config --global user.name "Horizon Bot"
+          git config --global user.email "horizon-bot@users.noreply.github.com"
+          git add data/summaries/ docs/_posts/
+          git diff --staged --quiet || git commit -m "馃摪 Daily Horizon summary $(date +'%Y-%m-%d %H:%M')"
+          git push
