@@ -35,6 +35,9 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: uv run horizon --hours 48
+        
+      - name: Install Python requests
+        run: pip install requests
 
       - name: Send Report to Telegram
         env:
