@@ -43,40 +43,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: *** secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: |
-          cat > /tmp/tg.py << 'PYEOF'
-          import os,requests,glob,re
-t=os.environ["TELEGRAM_BOT_TOKEN"]
-c=os.environ["TELEGRAM_CHAT_ID"]
-f=glob.glob("data/summaries/*-zh.md")
-if not f: print("no summary"); exit(0)
-txt=open(f[0],encoding="utf-8").read()
-items=re.split('<a id="item-\d+"></a>',txt)[1:]
-n=0
-for it in items:
-  it=it.strip()
-  if not it: continue
-  s=re.search("\d+\.\d+",it)
-  if s and float(s.group(0))<3.0: continue
-  m=re.search('##\s*\[(.+?)\]\((.+?)\)',it)
-  if not m: continue
-  tl=m.group(1); u=m.group(2)
-  b=re.sub("<[^>]+>","",it)
-  b=re.sub("参考链接.*","",b,flags=re.DOTALL)
-  b=re.sub("标签.*","",b)
-  b=re.sub("\*\*","",b)
-  b=re.sub("\n{3,}","\n\n",b).strip()
-  if len(b)>3800: b=b[:3800]+"..."
-  msg="<b>"+tl+"</b>\n\n"+b+"\n\n<a href=\""+u+"\">Read more</a>"
-  p={"chat_id":c,"text":msg,"parse_mode":"HTML"}
-  r=requests.post("https://api.telegram.org/bot"+t+"/sendMessage",json=p)
-  if r.status_code!=200:
-    p["parse_mode"]=""
-    requests.post("https://api.telegram.org/bot"+t+"/sendMessage",json=p)
-  n+=1
-print("sent "+str(n)+" articles")
-          PYEOF
-          python /tmp/tg.py
+        run: python -c "exec(__import__('base64').b64decode('aW1wb3J0IG9zLHJlcXVlc3RzLGdsb2IscmUKdD1vcy5lbnZpcm9uWyJURUxFR1JBTV9CT1RfVE9LRU4iXQpjPW9zLmVudmlyb25bIlRFTEVHUkFNX0NIQVRfSUQiXQpmPWdsb2IuZ2xvYigiZGF0YS9zdW1tYXJpZXMvKi16aC5tZCIpCmlmIG5vdCBmOiBwcmludCgibm8gc3VtbWFyeSIpOyBleGl0KDApCnR4dD1vcGVuKGZbMF0sZW5jb2Rpbmc9InV0Zi04IikucmVhZCgpCml0ZW1zPXJlLnNwbGl0KCc8YSBpZD0iaXRlbS1cZCsiPjwvYT4nLHR4dClbMTpdCm49MApmb3IgaXQgaW4gaXRlbXM6CiAgaXQ9aXQuc3RyaXAoKQogIGlmIG5vdCBpdDogY29udGludWUKICBzPXJlLnNlYXJjaCgiXGQrXC5cZCsiLGl0KQogIGlmIHMgYW5kIGZsb2F0KHMuZ3JvdXAoMCkpPDMuMDogY29udGludWUKICBtPXJlLnNlYXJjaCgnIyNccypcWyguKz8pXF1cKCguKz8pXCknLGl0KQogIGlmIG5vdCBtOiBjb250aW51ZQogIHRsPW0uZ3JvdXAoMSk7IHU9bS5ncm91cCgyKQogIGI9cmUuc3ViKCI8W14+XSs+IiwiIixpdCkKICBiPXJlLnN1Yigi5Y+C6ICD6ZO+5o6lLioiLCIiLGIsZmxhZ3M9cmUuRE9UQUxMKQogIGI9cmUuc3ViKCLmoIfnrb4uKiIsIiIsYikKICBiPXJlLnN1YigiXCpcKiIsIiIsYikKICBiPXJlLnN1YigiXG57Myx9IiwiXG5cbiIsYikuc3RyaXAoKQogIGlmIGxlbihiKT4zODAwOiBiPWJbOjM4MDBdKyIuLi4iCiAgbXNnPSI8Yj4iK3RsKyI8L2I+XG5cbiIrYisiXG5cbjxhIGhyZWY9XCIiK3UrIlwiPlJlYWQgbW9yZTwvYT4iCiAgcD17ImNoYXRfaWQiOmMsInRleHQiOm1zZywicGFyc2VfbW9kZSI6IkhUTUwifQogIHI9cmVxdWVzdHMucG9zdCgiaHR0cHM6Ly9hcGkudGVsZWdyYW0ub3JnL2JvdCIrdCsiL3NlbmRNZXNzYWdlIixqc29uPXApCiAgaWYgci5zdGF0dXNfY29kZSE9MjAwOgogICAgcFsicGFyc2VfbW9kZSJdPSIiCiAgICByZXF1ZXN0cy5wb3N0KCJodHRwczovL2FwaS50ZWxlZ3JhbS5vcmcvYm90Iit0KyIvc2VuZE1lc3NhZ2UiLGpzb249cCkKICBuKz0xCnByaW50KCJzZW50ICIrc3RyKG4pKyIgYXJ0aWNsZXMiKQ==').decode())"
 
       - name: Commit generated summaries
         run: |
