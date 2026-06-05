@@ -3,9 +3,7 @@
     "provider": "openai",
     "model": "deepseek-chat",
     "api_key_env": "OPENAI_API_KEY",
-    "base_url": "https://api.deepseek.com/v1"
-  }
-  "sources": {
+    "base_url": "https://api.deepseek.com/v1"\n  },\n  "sources": {
     "rss": [
       /* === 全球顶级大报与通讯社（自动翻译并精简） === */
       {
